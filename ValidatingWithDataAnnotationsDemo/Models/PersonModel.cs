@@ -1,13 +1,71 @@
 ﻿using GalaSoft.MvvmLight;
+using System.ComponentModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace ValidatingWithDataAnnotationsDemo.Models
 {
-    class PersonModel : ObservableObject
+    /// <summary>
+    /// Represents a Person
+    /// </summary>
+    class PersonModel :  ModelBase
     {
+        private string _FirstName;
+
+        /// <summary>
+        /// Gets or sets the FirstName
+        /// </summary>
+        [Required(ErrorMessage = "Please enter a first name")]
+        public string FirstName
+        {
+            get { return _FirstName; }
+            set
+            {
+                if (_FirstName != value)
+                {
+                    _FirstName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private string _LastName;
+
+        /// <summary>
+        /// Gets or sets the LastName
+        /// </summary>
+        [Required(ErrorMessage = "Please enter a last name")]
+        public string LastName
+        {
+            get { return _LastName; }
+            set
+            {
+                if (_LastName != value)
+                {
+                    _LastName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private int? _Age;
+
+        /// <summary>
+        /// Gets or sets the Age
+        /// </summary>
+        [Required(ErrorMessage = "Please enter an age")]
+        [Range(1, 100, ErrorMessage = "Age must be between 1 and 100")]
+        public int? Age
+        {
+            get { return _Age; }
+            set
+            {
+                if (_Age != value)
+                {
+                    _Age = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }        
     }
 }
