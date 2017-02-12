@@ -1,13 +1,14 @@
-﻿using GalaSoft.MvvmLight;
-using System.ComponentModel;
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ValidatingWithDataAnnotationsDemo.Models
 {
     /// <summary>
     /// Represents a Person
     /// </summary>
+    /// <remarks>
+    /// The PersonModel derives from ModelBase which in turn derives from MVVM Light's Observable object and
+    /// also implements IDataErrorInfo to enable validation via DataAnnotations
+    /// </remarks>
     class PersonModel :  ModelBase
     {
         private string _FirstName;
