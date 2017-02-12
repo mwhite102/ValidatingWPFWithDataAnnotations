@@ -5,11 +5,62 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ignore="http://www.galasoft.ch/ignore"
         mc:Ignorable="d ignore"
-        Height="300"
-        Width="300"
+        Height="500"
+        Width="500"
         Title="Validating With DataAnnotations"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
-    <Grid>
 
+    <Window.Resources>
+        
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <!--Main Menu-->
+        <Menu>
+            <MenuItem Header="_File">
+                <MenuItem Header="E_xit" />
+            </MenuItem>
+        </Menu>
+
+        <!--Toolbar-->
+        <ToolBar Grid.Row="1">
+            <Button ToolTip="Add A New Person">
+                <Button.Content>
+                    <Image Source="Images/AddNew48x48.png" />
+                </Button.Content>
+            </Button>
+            <Button ToolTip="Edit Selected Person">
+                <Button.Content>
+                    <Image Source="Images/DataEdit48x48.png" />
+                </Button.Content>
+            </Button>
+            <Button ToolTip="Delete Selected Person">
+                <Button.Content>
+                    <Image Source="Images/Delete48x48.png" />
+                </Button.Content>
+            </Button>
+        </ToolBar>
+        
+        <!--Main Content-->
+        <GroupBox Header="People"
+                  Grid.Row="2">
+            <ListBox>
+                
+            </ListBox>
+        </GroupBox>
+        
+        <!--Add New Person Form-->
+        <GroupBox Header="Add A New Person"
+                  Grid.Row="3">
+                
+        </GroupBox>
+        
     </Grid>
 </Window>
