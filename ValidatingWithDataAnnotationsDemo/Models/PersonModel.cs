@@ -9,7 +9,7 @@ namespace ValidatingWithDataAnnotationsDemo.Models
     /// The PersonModel derives from ModelBase which in turn derives from MVVM Light's Observable object and
     /// also implements IDataErrorInfo to enable validation via DataAnnotations
     /// </remarks>
-    class PersonModel :  ModelBase
+    public class PersonModel :  ModelBase
     {
         private string _FirstName;
 

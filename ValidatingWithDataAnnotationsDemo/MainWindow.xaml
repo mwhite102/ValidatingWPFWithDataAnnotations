@@ -36,11 +36,7 @@
                     <Image Source="Images/AddNew48x48.png" />
                 </Button.Content>
             </Button>
-            <Button ToolTip="Edit Selected Person">
-                <Button.Content>
-                    <Image Source="Images/DataEdit48x48.png" />
-                </Button.Content>
-            </Button>
+            <Button ToolTip="Edit Selected Person" />
             <Button ToolTip="Delete Selected Person">
                 <Button.Content>
                     <Image Source="Images/Delete48x48.png" />
