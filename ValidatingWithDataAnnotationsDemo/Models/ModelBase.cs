@@ -10,7 +10,7 @@ namespace ValidatingWithDataAnnotationsDemo.Models
     /// <summary>
     /// ModelBase derives from MVVM Light's ObservableObject and implements IDataErrorInfo
     /// </summary>
-    class ModelBase : ObservableObject, IDataErrorInfo
+    public class ModelBase : ObservableObject, IDataErrorInfo
     {
         #region IDataErrorInfo
 

@@ -1,5 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using ValidatingWithDataAnnotationsDemo.Models;
@@ -73,8 +73,8 @@ namespace ValidatingWithDataAnnotationsDemo.ViewModel
 
         private void DoDelete()
         {
-            People.Remove(_SelectedPersonModel);
-            _SelectedPersonModel = null;
+            People.Remove(SelectedPersonModel);
+            SelectedPersonModel = null;
         }
 
         private void DoSave()
@@ -130,6 +130,25 @@ namespace ValidatingWithDataAnnotationsDemo.ViewModel
             return _SelectedPersonModel != null;
         }
 
+        private ICommand _ExitCommand;
+
+        public ICommand ExitCommand
+        {
+            get
+            {
+                if (_ExitCommand == null)
+                {
+                    _ExitCommand = new RelayCommand(ExitCommandExecute);
+                }
+                return _ExitCommand;
+            }
+        }
+
+        private void ExitCommandExecute()
+        {
+            App.Current.Shutdown(0);
+        }
+
         private ICommand _SaveCommand;
 
         public ICommand SaveCommand
@@ -151,7 +170,7 @@ namespace ValidatingWithDataAnnotationsDemo.ViewModel
 
         private bool SaveCommandCanExecute()
         {
-            return true;
+            return NewPersonModel != null && NewPersonModel.IsValid();
         }
 
         private ICommand _CancelEditCommand;

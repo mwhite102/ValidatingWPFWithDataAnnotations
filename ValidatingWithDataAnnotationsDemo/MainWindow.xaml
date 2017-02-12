@@ -4,16 +4,165 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ignore="http://www.galasoft.ch/ignore"
+        xmlns:ValueConverters="clr-namespace:ValidatingWithDataAnnotationsDemo.ValueConverters"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         mc:Ignorable="d ignore"
         Height="500"
         Width="500"
         Title="Validating With DataAnnotations"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
 
+    <Window.InputBindings>
+        <KeyBinding Key="N"
+                    Modifiers="Ctrl"
+                    Command="{Binding AddCommand}" />
+        <KeyBinding Key="Delete"
+                    Command="{Binding DeleteCommand}" />
+    </Window.InputBindings>
+    
     <Window.Resources>
         
+        <!--ValueConverters-->
+        <ValueConverters:ObjectNullToVisibilityConverter x:Key="ObjectNullToVisibilityConverter" />
+
+        <!--
+            The CollectionViewSource's Source is bound to the People ObservableCollection
+            To get the SortDescription, import the System.CompenentModel namespace
+            xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        -->
+        <CollectionViewSource x:Key="PeopleCVS"
+                              Source="{Binding People}">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Name" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
+        <!--Default Label Style-->
+        <Style TargetType="Label">
+            <Setter Property="Margin"
+                    Value="3" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Right" />
+        </Style>
+        
+        <!--Default TextBox Style-->
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Margin"
+                    Value="3" />
+            <Style.Triggers>
+                <!--Assigns Tooltip with Validation Error if an error exists-->
+                <Trigger Property="Validation.HasError"
+                         Value="True">
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}">
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--Focus Textbox Style-->
+        <Style x:Key="FocusTextBoxStyle"
+               BasedOn="{StaticResource TextBoxStyle}"
+               TargetType="TextBox">
+            <Style.Triggers>
+                <!--Focus the TextBox when the NewPersonGroupBox becomes visible-->
+                <DataTrigger Binding="{Binding ElementName=NewPersonGroupBox, Path=IsVisible}"
+                             Value="True">
+                    <Setter Property="FocusManager.FocusedElement"
+                            Value="{Binding ElementName=FirstName_TextBox}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--Default StackPanel Style-->
+        <Style TargetType="StackPanel">
+            <Setter Property="Margin"
+                    Value="10" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Right" />
+        </Style>
+        
+        <!--Default Button Style-->
+        <Style TargetType="Button">
+            <Setter Property="Margin"
+                    Value="3" />
+            <Setter Property="Height"
+                    Value="25" />
+            <Setter Property="Width"
+                    Value="75" />
+        </Style>
+
+        <!--Base GroupBox Style-->
+        <Style x:Key="GroupBoxStyle"
+               TargetType="GroupBox">
+            <Setter Property="Margin"
+                    Value="3" />
+        </Style>
+        
+        <!--New Person GroupBox Style-->
+        <Style x:Key="NewPersonGroupBoxStyle"
+               BasedOn="{StaticResource GroupBoxStyle}"
+               TargetType="GroupBox">
+            <Setter Property="Visibility"
+                    Value="{Binding NewPersonModel, Converter={StaticResource ObjectNullToVisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}}" />
+        </Style>
+
+        <!--Style to make the toolbar button appear grayed out when disabled-->
+        <Style TargetType="{x:Type Image}"
+               x:Key="ToolBarImageStyle">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
+                             Value="False">
+                    <Setter Property="Opacity"
+                            Value="0.25" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--Context Menu For ListBox-->
+        <ContextMenu x:Key="ListBox_ContextMenu">
+            <MenuItem Header="_New"
+                      Command="{Binding DataContext.AddCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+                <MenuItem.Icon>
+                    <Image Source="Images/AddNew48x48.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+
+        <!--Context Menu For ListBoxItem-->
+        <ContextMenu x:Key="ListBoxItem_ContextMenu">
+            <MenuItem Header="_New"
+                      Command="{Binding DataContext.AddCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+                <MenuItem.Icon>
+                    <Image Source="Images/AddNew48x48.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="_Delete"
+                      Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+                <MenuItem.Icon>
+                    <Image Source="Images/Delete48x48.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+
+        <!--ListBoxItem Style-->
+        <Style x:Key="ListBoxItem_Style"
+               TargetType="{x:Type ListBoxItem}">
+            <Setter Property="ContextMenu"
+                    Value="{StaticResource ListBoxItem_ContextMenu}" />
+        </Style>
+
+        <!--ListBox Style-->
+        <Style x:Key="ListBox_Style"
+               TargetType="{x:Type ListBox}">
+            <Setter Property="ContextMenu"
+                    Value="{StaticResource ListBox_ContextMenu}" />
+            <Setter Property="Margin"
+                    Value="3" />
+        </Style>
+
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -21,42 +170,121 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
         <!--Main Menu-->
         <Menu>
             <MenuItem Header="_File">
-                <MenuItem Header="E_xit" />
+                <MenuItem Header="E_xit" 
+                          Command="{Binding ExitCommand}"/>
             </MenuItem>
         </Menu>
 
         <!--Toolbar-->
         <ToolBar Grid.Row="1">
-            <Button ToolTip="Add A New Person">
+            <Button ToolTip="Add A New Person"
+                    Command="{Binding AddCommand}">
                 <Button.Content>
-                    <Image Source="Images/AddNew48x48.png" />
+                    <Image Source="Images/AddNew48x48.png"
+                           Style="{StaticResource ToolBarImageStyle}" />
                 </Button.Content>
             </Button>
-            <Button ToolTip="Edit Selected Person" />
-            <Button ToolTip="Delete Selected Person">
+            <Button ToolTip="Delete Selected Person"
+                    Command="{Binding DeleteCommand}">
                 <Button.Content>
-                    <Image Source="Images/Delete48x48.png" />
+                    <Image Source="Images/Delete48x48.png"
+                           Style="{StaticResource ToolBarImageStyle}" />
                 </Button.Content>
             </Button>
         </ToolBar>
-        
+
         <!--Main Content-->
         <GroupBox Header="People"
-                  Grid.Row="2">
-            <ListBox>
-                
-            </ListBox>
+                  Grid.Row="2"
+                  Style="{StaticResource GroupBoxStyle}">
+            <!--The People ListView.  The ItemsSource is the CollectionViewSource-->
+            <ListView ItemsSource="{Binding Source={StaticResource PeopleCVS}}"
+                      SelectedItem="{Binding SelectedPersonModel}"
+                      Style="{StaticResource ListBox_Style}"
+                      ItemContainerStyle="{StaticResource ListBoxItem_Style}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="First Name"
+                                        DisplayMemberBinding="{Binding FirstName}"
+                                        Width="150" />
+                        <GridViewColumn Header="Last Name"
+                                        DisplayMemberBinding="{Binding LastName}"
+                                        Width="150" />
+                        <GridViewColumn Header="Age"
+                                        DisplayMemberBinding="{Binding Age}"
+                                        Width="75" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </GroupBox>
-        
+
         <!--Add New Person Form-->
         <GroupBox Header="Add A New Person"
-                  Grid.Row="3">
-                
+                  x:Name="NewPersonGroupBox"
+                  Grid.Row="3"
+                  Style="{StaticResource NewPersonGroupBoxStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--FirstName-->
+                <Label Grid.Column="0"
+                       Grid.Row="0"
+                       Content="_First Name"
+                       Target="{Binding ElementName=FirstName_TextBox}" />
+                <TextBox Grid.Column="1"
+                         Grid.Row="0"
+                         x:Name="FirstName_TextBox"
+                         Text="{Binding NewPersonModel.FirstName, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource FocusTextBoxStyle}"/>
+
+                <!--LastName-->
+                <Label Grid.Column="0"
+                       Grid.Row="1"
+                       Content="_Last Name"
+                       Target="{Binding ElementName=LastName_TextBox}" />
+                <TextBox Grid.Column="1"
+                         Grid.Row="1"
+                         x:Name="LastName_TextBox"
+                         Text="{Binding NewPersonModel.LastName, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource TextBoxStyle}"/>
+
+                <!--Age-->
+                <Label Grid.Column="0"
+                       Grid.Row="2"
+                       Content="_Age"
+                       Target="{Binding ElementName=Age_TextBox}" />
+                <TextBox Grid.Column="1"
+                         Grid.Row="2"
+                         x:Name="Age_TextBox"
+                         Text="{Binding NewPersonModel.Age, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource TextBoxStyle}"/>
+
+                <StackPanel Grid.Column="1"
+                            Grid.Row="3"
+                            Orientation="Horizontal">
+                    <Button Content="_Cancel"
+                            IsCancel="True"
+                            Command="{Binding CancelEditCommand}" />
+                    <Button Content="_Save"
+                            IsDefault="True"
+                            Command="{Binding SaveCommand}" />
+                </StackPanel>
+
+            </Grid>
         </GroupBox>
-        
+
     </Grid>
 </Window>

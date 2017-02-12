@@ -68,5 +68,33 @@ namespace ValidatingWithDataAnnotationsDemo.Models
                 }
             }
         }        
+
+        /// <summary>
+        /// Determines if the current object is valid
+        /// </summary>
+        /// <returns>Returns True if valid, false if it is not</returns>
+        public bool IsValid()
+        {
+            bool result = true;
+            foreach(var s in ValidatedFields)
+            {
+                if (!string.IsNullOrEmpty(OnValidate(s)))
+                {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// A string array of fields that are validated
+        /// </summary>
+        string[] ValidatedFields = new string [] 
+        {
+            "FirstName",
+            "LastName",
+            "Age"
+        };
     }
 }

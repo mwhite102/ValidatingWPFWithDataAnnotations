@@ -78,6 +78,7 @@
     </ApplicationDefinition>
     <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\PersonModel.cs" />
+    <Compile Include="ValueConverters\ObjectNullToVisibilityConverter.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">
